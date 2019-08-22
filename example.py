@@ -3,9 +3,11 @@ import json
 import time
 import argparse
 import sys
+import os
+import datetime
 
 STATE_FILE = 'wideq_state.json'
-
+DEBUG_MODE = False
 
 def authenticate(gateway):
     """Interactively authenticate the user via a browser to get an OAuth
@@ -34,16 +36,21 @@ def mon(client, device_id):
 
     device = client.get_device(device_id)
     model = client.model_info(device)
+    lang_prodcuct = client.lang_pack_product(device)
 
     with wideq.Monitor(client.session, device_id) as mon:
         try:
             while True:
                 time.sleep(1)
-                print('Polling...')
+                now = datetime.datetime.now()
+                print('polling... {}:{}:{}'.format(now.hour, now.minute, now.second))
                 data = mon.poll()
                 if data:
                     try:
                         res = model.decode_monitor(data)
+                        if DEBUG_MODE:
+                            with open(device.name + '_polling.json', 'w', -1, 'utf-8') as outfile:
+                                json.dump(res, outfile, ensure_ascii=False, indent="\t")
                     except ValueError:
                         print('status data: {!r}'.format(data))
                     else:
@@ -53,8 +60,13 @@ def mon(client, device_id):
                             except KeyError:
                                 print('- {}: {}'.format(key, value))
                             if isinstance(desc, wideq.EnumValue):
+                                try:
+                                    lang_value = lang_prodcuct['pack'][desc.options.get(value, value)]
+                                except KeyError:
+                                    lang_value = desc.options.get(value, value)
                                 print('- {}: {}'.format(
                                     key, desc.options.get(value, value)
+                                    # key, lang_value
                                 ))
                             elif isinstance(desc, wideq.RangeValue):
                                 print('- {0}: {1} ({2.min}-{2.max})'.format(
@@ -64,6 +76,105 @@ def mon(client, device_id):
         except KeyboardInterrupt:
             pass
 
+def dehum_mon(client, device_id):
+    device = client.get_device(device_id)
+    if device.type != wideq.DeviceType.DEHUMIDIFIER:
+        print('This is not an DEHUMIDIFIER device.')
+        return
+
+    machine = wideq.DehumDevice(client, device)
+
+    try:
+        machine.monitor_start()
+        while True:
+            time.sleep(1)
+            state = machine.poll()
+            if state:
+                now = datetime.datetime.now()
+                print('polling... {}:{}:{}'.format(now.hour, now.minute, now.second))
+                print('device_name: ', state.device_name)
+                print('device_type: ', state.device_type)
+                print('state: ', state.state)
+                print('mode: ', state.mode)
+                print('windstrength_state: ', state.windstrength_state)
+                print('airremoval_state: ', state.airremoval_state)
+                print('current_humidity: ', state.current_humidity)
+                print('target_humidity: ', state.target_humidity)
+                if DEBUG_MODE:
+                    with open(device.name + '_polling.json', 'w', -1, 'utf-8') as outfile:
+                        json.dump(state.data, outfile, ensure_ascii=False, indent="\t")
+    except KeyboardInterrupt:
+        pass
+    finally:
+        machine.monitor_stop()
+
+def washer_mon(client, device_id):
+    device = client.get_device(device_id)
+    if device.type != wideq.DeviceType.WASHER:
+        print('This is not an WASHER device.')
+        return
+
+    machine = wideq.WasherDevice(client, device)
+
+    try:
+        machine.monitor_start()
+        while True:
+            time.sleep(1)
+            state = machine.poll()
+            if state:
+                now = datetime.datetime.now()
+                print('polling... {}:{}:{}'.format(now.hour, now.minute, now.second))
+                print('device_name: ', state.device_name)
+                print('device_type: ', state.device_type)
+                print('state: ', state.state)
+                print('remaining_time: ', state.remaining_time)
+                print('initial_time: ', state.initial_time)
+                print('reserve_time: ', state.reserve_time)
+                print('previous_state: ', state.previous_state)
+                print('smart_course: ', state.smart_course)
+                print('course: ', state.course)
+                print('error: ', state.error)   
+                if DEBUG_MODE:
+                    with open(device.name + '_polling.json', 'w', -1, 'utf-8') as outfile:
+                        json.dump(state.data, outfile, ensure_ascii=False, indent="\t")
+    except KeyboardInterrupt:
+        pass
+    finally:
+        machine.monitor_stop()
+
+def dryer_mon(client, device_id):
+    device = client.get_device(device_id)
+    if device.type != wideq.DeviceType.DRYER:
+        print('This is not an DRYER device.')
+        return
+
+    machine = wideq.DryerDevice(client, device)
+
+    try:
+        machine.monitor_start()
+        while True:
+            time.sleep(1)
+            state = machine.poll()
+            if state:
+                now = datetime.datetime.now()
+                print('polling... {}:{}:{}'.format(now.hour, now.minute, now.second))
+                print('device_name: ', state.device_name)
+                print('device_type: ', state.device_type)
+                print('state: ', state.state)
+                print('remaining_time: ', state.remaining_time)
+                print('initial_time: ', state.initial_time)
+                print('reserve_time: ', state.reserve_time)
+                print('process_state: ', state.process_state)
+                print('smart_course: ', state.smart_course)
+                print('course: ', state.course)
+                print('error: ', state.error)
+                if DEBUG_MODE:
+                    with open(device.name + '_polling.json', 'w', -1, 'utf-8') as outfile:
+                        json.dump(state.data, outfile, ensure_ascii=False, indent="\t")
+    except KeyboardInterrupt:
+        pass
+    finally:
+        machine.monitor_stop()
 
 def ac_mon(client, device_id):
     """Monitor an AC/HVAC device, showing higher-level information about
@@ -145,6 +256,9 @@ def ac_config(client, device_id):
 EXAMPLE_COMMANDS = {
     'ls': ls,
     'mon': mon,
+    'washer-mon': washer_mon,
+    'dryer-mon': dryer_mon,
+    'dehum-mon': dehum_mon,
     'ac-mon': ac_mon,
     'set-temp': set_temp,
     'turn': turn,
@@ -160,7 +274,7 @@ def example_command(client, cmd, args):
 def example(country, language, cmd, args):
     # Load the current state for the example.
     try:
-        with open(STATE_FILE) as f:
+        with open(STATE_FILE, 'r', -1, 'utf-8') as f:
             state = json.load(f)
     except IOError:
         state = {}
@@ -191,8 +305,8 @@ def example(country, language, cmd, args):
 
     # Save the updated state.
     state = client.dump()
-    with open(STATE_FILE, 'w') as f:
-        json.dump(state, f)
+    with open(STATE_FILE, 'w', -1, 'utf-8') as f:
+        json.dump(state, f, ensure_ascii=False, indent="\t")
 
 
 def main():

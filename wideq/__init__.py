@@ -3,5 +3,8 @@
 from .core import *  # noqa
 from .client import *  # noqa
 from .ac import *  # noqa
+from .dryer import *  # noqa
+from .washer import *  # noqa
+from .dehum import *  # noqa
 
-__version__ = '1.1.1'
+__version__ = '1.1.2'

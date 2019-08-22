@@ -11,10 +11,11 @@ from typing import Any, Optional
 
 from . import core
 
-DEFAULT_COUNTRY = 'US'
-DEFAULT_LANGUAGE = 'en-US'
+DEFAULT_COUNTRY = 'KR'
+DEFAULT_LANGUAGE = 'ko-KR'
 #: Represents an unknown enum value.
 _UNKNOWN = 'Unknown'
+DEBUG_MODE = False
 
 
 class Monitor(object):
@@ -89,6 +90,8 @@ class Client(object):
         # Cached model info data. This is a mapping from URLs to JSON
         # responses.
         self._model_info = {}
+        self._lang_pack_product = {}
+        self._lang_pack_model = {}
 
         # Locale information used to discover a gateway, if necessary.
         self._country = country
@@ -161,6 +164,12 @@ class Client(object):
         if 'model_info' in state:
             client._model_info = state['model_info']
 
+        if 'lang_pack_product' in state:
+            client._lang_pack_product = state['lang_pack_product']
+
+        if 'lang_pack_model' in state:
+            client._lang_pack_model = state['lang_pack_model']
+
         if 'country' in state:
             client._country = state['country']
 
@@ -229,6 +238,24 @@ class Client(object):
             self._model_info[url] = device.load_model_info()
         return ModelInfo(self._model_info[url])
 
+    def lang_pack_product(self, device):
+        """For a LanguagePack object, get a LangPackProduct object describing
+        the model's capabilities.
+        """
+        url = device.lang_pack_product_url
+        if url not in self._lang_pack_product:
+            self._lang_pack_product[url] = device.load_lang_pack_product()
+        return self._lang_pack_product[url]
+
+    def lang_pack_model(self, device):
+        """For a LanguagePack object, get a LangPackModel object describing
+        the model's capabilities.
+        """
+        url = device.lang_pack_model_url
+        if url not in self._lang_pack_model:
+            self._lang_pack_model[url] = device.load_lang_pack_model()
+        return self._lang_pack_model[url]
+
 
 class DeviceType(enum.Enum):
     """The category of device."""
@@ -248,6 +275,38 @@ class DeviceType(enum.Enum):
     AIR_PURIFIER = 402
     DEHUMIDIFIER = 403
     ROBOT_KING = 501  # Robotic vacuum cleaner?
+    ARCH = 1001
+    MISSG = 3001
+    SENSOR = 3002
+    SOLAR_SENSOR = 3102
+    IOT_LIGHTING = 3003
+    IOT_MOTION_SENSOR = 3004
+    IOT_SMART_PLUG = 3005
+    IOT_DUST_SENSOR = 3006
+    EMS_AIR_STATION = 4001
+    AIR_SENSOR = 4003
+
+class DeviceTypeKor(enum.Enum):
+    """The category of device."""
+
+    냉장고 = 101
+    김치냉장고 = 102
+    정수기 = 103
+    세탁기 = 201
+    건조기 = 202
+    스타일러 = 203
+    식기세척기 = 204
+    오븐 = 301
+    전자레인지 = 302
+    인덕션 = 303
+    후드 = 304
+    에어컨 = 401  # Includes heat pumps, etc., possibly all HVAC devices.
+    공기청정기 = 402
+    제습기 = 403
+    로보킹 = 501  # Robotic vacuum cleaner?
+    TV = 701
+    보일러 = 801
+    스피커 = 901
     ARCH = 1001
     MISSG = 3001
     SENSOR = 3002
@@ -282,19 +341,55 @@ class DeviceInfo(object):
         return self.data['modelJsonUrl']
 
     @property
+    def lang_pack_product_url(self):
+        return self.data['langPackProductTypeUri']
+
+    @property
+    def lang_pack_model_url(self):
+        return self.data['langPackModelUri']
+
+    @property
+    def macaddress(self):
+        return self.data['macAddress']
+
+    @property
     def name(self):
         return self.data['alias']
 
     @property
     def type(self):
         """The kind of device, as a `DeviceType` value."""
-
+        if DEBUG_MODE:
+            with open('model_{}_{}({}).json'.format(DeviceTypeKor(self.data['deviceType']).name, self.model_id, self.name), 'w', -1, 'utf-8') as outfile:
+                json.dump(self.data, outfile, ensure_ascii=False, indent="\t")
         return DeviceType(self.data['deviceType'])
 
     def load_model_info(self):
         """Load JSON data describing the model's capabilities.
         """
         return requests.get(self.model_info_url).json()
+
+    def load_lang_pack_product(self):
+        """Load JSON data describing the model's capabilities.
+        """
+        if DEBUG_MODE:
+            with open('json_{}_{}({}).json'.format(DeviceTypeKor(self.data['deviceType']).name, self.model_id, self.name), 'w', -1, 'utf-8') as outfile:
+                json.dump(requests.get(self.model_info_url).json(), outfile, ensure_ascii=False, indent="\t")
+            with open('lang_prodcut_{}_{}({}).json'.format(DeviceTypeKor(self.data['deviceType']).name, self.model_id, self.name), 'w', -1, 'utf-8') as outfile:
+                json.dump(requests.get(self.lang_pack_product_url).json(), outfile, ensure_ascii=False, indent="\t")
+        return requests.get(self.lang_pack_product_url).json()
+
+    def load_lang_pack_model(self):
+        """Load JSON data describing the model's capabilities.
+        """
+        if self.lang_pack_model_url is None:
+            return 'None'
+        if self.lang_pack_model_url == '':
+            return 'None'
+        if DEBUG_MODE:
+            with open('lang_model_{}_{}({}).json'.format(DeviceTypeKor(self.data['deviceType']).name, self.model_id, self.name), 'w', -1, 'utf-8') as outfile:
+                json.dump(requests.get(self.lang_pack_model_url).json(), outfile, ensure_ascii=False, indent="\t")
+        return requests.get(self.lang_pack_model_url).json()
 
 
 BitValue = namedtuple('BitValue', ['options'])
@@ -311,6 +406,10 @@ class ModelInfo(object):
 
     def __init__(self, data):
         self.data = data
+
+    @property
+    def model_type(self):
+        return self.data['Info']['modelType']
 
     def value(self, name: str):
         """Look up information about a value.
@@ -334,6 +433,10 @@ class ModelInfo(object):
         elif d['type'].lower() == 'reference':
             ref = d['option'][0]
             return ReferenceValue(self.data[ref])
+        elif d['type'] == 'Boolean':
+            return EnumValue({'0': 'False', '1' : 'True'})
+        elif d['type'] == 'String':
+            pass 
         else:
             raise ValueError("unsupported value type {}".format(d['type']))
 
@@ -361,6 +464,34 @@ class ModelInfo(object):
         return options[value]
 
     def reference_name(self, key: str, value: Any) -> Optional[str]:
+        """Look up the friendly name for an encoded reference value.
+
+        :param key: The referenced key.
+        :param value: The value whose name we want to look up.
+        :returns: The friendly name for the referenced value.  If no name
+            can be found None will be returned.
+        """
+        value = str(value)
+        reference = self.value(key).reference
+        if value in reference:
+            return reference[value]['name']
+        return None
+
+    def reference_title(self, key: str, value: Any) -> Optional[str]:
+        """Look up the friendly name for an encoded reference value.
+
+        :param key: The referenced key.
+        :param value: The value whose name we want to look up.
+        :returns: The friendly name for the referenced value.  If no name
+            can be found None will be returned.
+        """
+        value = str(value)
+        reference = self.value(key).reference
+        if value in reference:
+            return reference[value]['title']
+        return None
+
+    def reference_comment(self, key: str, value: Any) -> Optional[str]:
         """Look up the friendly name for an encoded reference value.
 
         :param key: The referenced key.
@@ -404,6 +535,26 @@ class ModelInfo(object):
         else:
             return self.decode_monitor_json(data)
 
+class LangPackProduct(object):
+    """A description of a device model's capabilities.
+    """
+
+    def __init__(self, data):
+        self.data = data
+
+    def decode_monitor(self, data):
+        return json.loads(self)
+
+class LangPackModel(object):
+    """A description of a device model's capabilities.
+    """
+
+    def __init__(self, data):
+        self.data = data
+
+    def decode_monitor(self, data):
+        return json.loads(self)
+
 
 class Device(object):
     """A higher-level interface to a specific device.
@@ -420,6 +571,8 @@ class Device(object):
         self.client = client
         self.device = device
         self.model: ModelInfo = client.model_info(device)
+        self.lang_product: LangPackProduct = client.lang_pack_product(device)
+        self.lang_model: LangPackModel = client.lang_pack_model(device)
 
     def _set_control(self, key, value):
         """Set a device's control for `key` to `value`."""
@@ -459,4 +612,7 @@ class Device(object):
 
     def monitor_stop(self):
         """Stop monitoring the device's status."""
-        self.mon.stop()
+        try:
+            self.mon.stop()
+        except AttributeError:
+            logging.warning('접속실패')

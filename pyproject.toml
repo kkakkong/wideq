@@ -4,9 +4,9 @@ build-backend = "flit.buildapi"
 
 [tool.flit.metadata]
 module = "wideq"
-author = "Adrian Sampson"
-author-email = "adrian@radbox.org"
-home-page = "https://github.com/sampsyo/wideq"
+author = "gugu927"
+author-email = "kimcg0927@gmail.com"
+home-page = "https://github.com/gugu927/wideq"
 requires = [
     "requests"
 ]

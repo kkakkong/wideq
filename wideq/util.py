@@ -14,10 +14,36 @@ def lookup_enum(attr: str, data: dict, device: T):
     :param device: A sub-class instance of a Device.
     :returns: The enum value.
     """
-    return device.model.enum_name(attr, data[attr])
+    value = device.model.enum_name(attr, data[attr])
+    if value is None:
+        return 'Off'
+    try:
+        lang = device.lang_product['pack'][device.model.value(attr).options.get(value, value)]
+    except KeyError:
+        lang = value
+    if str.find(lang, '@WM') != -1:
+        try:
+            lang = device.lang_model['pack'][device.model.value(attr).options.get(value, value)]
+        except KeyError:
+            lang = value
 
+    if lang == '@operation_on':
+        return 'On'
+    elif lang == '@operation_off':
+        return 'Off'
+    return lang
 
-def lookup_reference(attr: str, data: dict, device: T) -> str:
+def lookup_enum_value(attr: str, data: dict, device: T):
+    """Looks up an enum value for the provided attr.
+
+    :param attr: The attribute to lookup in the enum.
+    :param data: The JSON data from the API.
+    :param device: A sub-class instance of a Device.
+    :returns: The enum value.
+    """
+    return device.model.enum_value(attr, data[attr])
+
+def lookup_reference_name(attr: str, data: dict, device: T) -> str:
     """Look up a reference value for the provided attribute.
 
     :param attr: The attribute to find the value for.
@@ -28,4 +54,57 @@ def lookup_reference(attr: str, data: dict, device: T) -> str:
     value = device.model.reference_name(attr, data[attr])
     if value is None:
         return 'Off'
-    return value
+    try:
+        lang = device.lang_product['pack'][device.model.value(attr).reference.get(value, value)]
+    except KeyError:
+        lang = value
+    if str.find(lang, '@WM') != -1:
+        try:
+            lang = device.lang_model['pack'][device.model.value(attr).reference.get(value, value)]
+        except KeyError:
+            lang = value
+    return lang
+
+def lookup_reference_title(attr: str, data: dict, device: T) -> str:
+    """Look up a reference value for the provided attribute.
+
+    :param attr: The attribute to find the value for.
+    :param data: The JSON data from the API.
+    :param device: A sub-class instance of a Device.
+    :returns: The looked up value.
+    """
+    value = device.model.reference_title(attr, data[attr])
+    if value is None:
+        return 'Off'
+    try:
+        lang = device.lang_product['pack'][device.model.value(attr).reference.get(value, value)]
+    except KeyError:
+        lang = value
+    if str.find(lang, '@WM') != -1:
+        try:
+            lang = device.lang_model['pack'][device.model.value(attr).reference.get(value, value)]
+        except KeyError:
+            lang = value
+    return lang
+
+def lookup_reference_comment(attr: str, data: dict, device: T) -> str:
+    """Look up a reference value for the provided attribute.
+
+    :param attr: The attribute to find the value for.
+    :param data: The JSON data from the API.
+    :param device: A sub-class instance of a Device.
+    :returns: The looked up value.
+    """
+    value = device.model.reference_comment(attr, data[attr])
+    if value is None:
+        return 'Off'
+    try:
+        lang = device.lang_product['pack'][device.model.value(attr).reference.get(value, value)]
+    except KeyError:
+        lang = value
+    if str.find(lang, '@WM') != -1:
+        try:
+            lang = device.lang_model['pack'][device.model.value(attr).reference.get(value, value)]
+        except KeyError:
+            lang = value
+    return lang

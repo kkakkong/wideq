@@ -1,6 +1,3 @@
-[![PyPI](https://img.shields.io/pypi/v/wideq.svg)](https://pypi.org/project/wideq/)
-[![CircleCI](https://circleci.com/gh/sampsyo/wideq.svg?style=svg)](https://circleci.com/gh/sampsyo/wideq)
-
 WideQ
 =====
 
@@ -9,7 +6,7 @@ A library for interacting with the "LG SmartThinq" system, which can control hea
 To try out the API, there is a simple command-line tool included here, called `example.py`.
 To use it, provide it with a country and language code via the `-c` and `-l` flags, respectively:
 
-    $ python3 example.py -c US -l en-US
+    $ python3 example.py -c KR -l ko-KR
 
 LG accounts seem to be associated with specific countries, so be sure to use the one with which you originally created your account.
 For Korean, for example, you'd use `-c KR -l ko-KR`.
@@ -31,10 +28,10 @@ You can also specify one of several other commands:
 Credits
 -------
 
-This is by [Adrian Sampson][adrian].
+This is by [GuGu927][andy].
 The license is [MIT][].
 I also made a [Home Assistant component][hass-smartthinq] that uses wideq.
 
-[hass-smartthinq]: https://github.com/sampsyo/hass-smartthinq
-[adrian]: https://github.com/sampsyo
+[hass-smartthinq]: https://github.com/gugu927/hass-smartthinq
+[adrian]: https://github.com/gugu927
 [mit]: https://opensource.org/licenses/MIT
