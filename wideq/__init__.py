@@ -7,4 +7,4 @@ from .dryer import *  # noqa
 from .washer import *  # noqa
 from .dehum import *  # noqa
 
-__version__ = '1.1.2'
+__version__ = '0.0.1'
