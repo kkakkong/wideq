@@ -33,5 +33,5 @@ The license is [MIT][].
 I also made a [Home Assistant component][hass-smartthinq] that uses wideq.
 
 [hass-smartthinq]: https://github.com/gugu927/hass-smartthinq
-[adrian]: https://github.com/gugu927
+[andy]: https://github.com/gugu927
 [mit]: https://opensource.org/licenses/MIT
