@@ -1,12 +1,9 @@
 from typing import TypeVar
-
 from .client import Device
-
 
 T = TypeVar('T', bound=Device)
 
-
-def lookup_enum(attr: str, data: dict, device: T):
+def lookup_lang(attr: str, data: dict, device: T):
     """Looks up an enum value for the provided attr.
 
     :param attr: The attribute to lookup in the enum.
@@ -17,21 +14,30 @@ def lookup_enum(attr: str, data: dict, device: T):
     value = device.model.enum_name(attr, data[attr])
     if value is None:
         return 'Off'
+    if value == '@operation_on':
+        return 'On'
+    elif value == '@operation_off':
+        return 'Off'
     try:
-        lang = device.lang_product['pack'][device.model.value(attr).options.get(value, value)]
+        lang = device.lang_product.enum_name(attr, value)
     except KeyError:
         lang = value
     if str.find(lang, '@WM') != -1:
         try:
-            lang = device.lang_model['pack'][device.model.value(attr).options.get(value, value)]
+            lang = device.lang_model.enum_name(attr, value)
         except KeyError:
             lang = value
-
-    if lang == '@operation_on':
-        return 'On'
-    elif lang == '@operation_off':
-        return 'Off'
     return lang
+
+def lookup_enum(attr: str, data: dict, device: T):
+    """Looks up an enum value for the provided attr.
+
+    :param attr: The attribute to lookup in the enum.
+    :param data: The JSON data from the API.
+    :param device: A sub-class instance of a Device.
+    :returns: The enum value.
+    """
+    return device.model.enum_name(attr, data[attr])
 
 def lookup_enum_value(attr: str, data: dict, device: T):
     """Looks up an enum value for the provided attr.

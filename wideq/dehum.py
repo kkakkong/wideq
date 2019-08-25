@@ -1,11 +1,21 @@
 import enum
 from typing import Optional
 from .client import Device
-from .util import lookup_enum, lookup_reference_name, lookup_reference_title, lookup_reference_comment
+from .util import lookup_enum, lookup_enum_value, lookup_reference_name, lookup_reference_title, lookup_reference_comment, lookup_lang
 
 class DehumOperation(enum.Enum):
     ON = "@operation_on"
     OFF = "@operation_off"
+    스마트제습 = "@AP_MAIN_MID_OPMODE_SMART_DEHUM_W"
+    쾌속제습 = "@AP_MAIN_MID_OPMODE_FAST_DEHUM_W"
+    저소음제습 = "@AP_MAIN_MID_OPMODE_CILENT_DEHUM_W"
+    집중건조 = "@AP_MAIN_MID_OPMODE_CONCENTRATION_DRY_W"
+    의류건조 = "@AP_MAIN_MID_OPMODE_CLOTHING_DRY_W"
+    공기제균 = "@AP_MAIN_MID_OPMODE_IONIZER_W"
+
+class DehumWindStrength(enum.Enum):
+    약 = "@AP_MAIN_MID_WINDSTRENGTH_DHUM_LOW_W"
+    강 = "@AP_MAIN_MID_WINDSTRENGTH_DHUM_HIGH_W"
 
 class DehumAIRREMOVAL(enum.Enum):
     OFF = "@AP_OFF_W"
@@ -15,27 +25,33 @@ class DehumDevice(Device):
     """A higher-level interface for a dehum."""
 
     def set_on(self, is_on):
+        key = 'Operation'
         mode = DehumOperation.ON if is_on else DehumOperation.OFF
-        mode_value = self.model.enum_value('Operation', mode.value)
-        self._set_control('Operation', mode_value)
-            
+        mode_value = self.model.enum_value(key, mode.value)
+        self._set_control(key, mode_value)
+
     def set_mode(self, mode):
-        mode_value = self.model.enum_value('OpMode', mode.value)
-        self._set_control('OpMode', mode_value)
+        key = 'OpMode'
+        value = DehumOperation[mode].value
+        mode_value = self.model.enum_value(key, value)
+        self._set_control(key, mode_value)
 
     def set_humidity(self, hum):
-        """Set the device's target temperature in Celsius degrees.
+        """Set the device's target humidity.
         """
         self._set_control('HumidityCfg', hum)
     
     def set_windstrength(self, mode):
-        windstrength_value = self.model.enum_value('WindStrength', mode.value)
-        self._set_control('WindStrength', windstrength_value)
+        key = 'WindStrength'
+        value = DehumWindStrength[mode].value
+        mode_value = self.model.enum_value(key, value)
+        self._set_control(key, mode_value)
     
     def set_airremoval(self, is_on):
+        key = 'AirRemoval'
         mode = DehumAIRREMOVAL.ON if is_on else DehumAIRREMOVAL.OFF
-        mode_value = self.model.enum_value('AirRemoval', mode.value)
-        self._set_control('AirRemoval', mode_value)
+        mode_value = self.model.enum_value(key, mode.value)
+        self._set_control(key, mode_value)
 
     def poll(self) -> Optional['dehumStatus']:
         """Poll the device's current state.
@@ -97,7 +113,7 @@ class DehumStatus(object):
     def state(self):
         """Get the state of the dryer."""
         key = 'Operation'
-        value = lookup_enum(key, self.data, self.dehum)
+        value = lookup_lang(key, self.data, self.dehum)
         if value is None:
             return 'Off'
         return value
@@ -105,25 +121,25 @@ class DehumStatus(object):
     @property
     def mode(self):
         key = 'OpMode'
-        value = lookup_enum(key, self.data, self.dehum)
+        value = lookup_lang(key, self.data, self.dehum)
         return value
-   
+
     @property
     def windstrength_state(self):
         key = 'WindStrength'
-        value = lookup_enum(key, self.data, self.dehum)
+        value = lookup_lang(key, self.data, self.dehum)
         return value
-    
+
     @property
     def airremoval_state(self):
         key = 'AirRemoval'
-        value = lookup_enum(key, self.data, self.dehum)
+        value = lookup_lang(key, self.data, self.dehum)
         return value
-    
+
     @property
     def current_humidity(self):
         return self.data['SensorHumidity']
-    
+
     @property
     def target_humidity(self):
         return self.data['HumidityCfg']

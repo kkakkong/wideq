@@ -183,6 +183,8 @@ class Client(object):
 
         out = {
             'model_info': self._model_info,
+            'lang_pack_product': self._lang_pack_product,
+            'lang_pack_model': self._lang_pack_model,
         }
 
         if self._gateway:
@@ -245,7 +247,7 @@ class Client(object):
         url = device.lang_pack_product_url
         if url not in self._lang_pack_product:
             self._lang_pack_product[url] = device.load_lang_pack_product()
-        return self._lang_pack_product[url]
+        return LangPackProduct(self._lang_pack_product[url])
 
     def lang_pack_model(self, device):
         """For a LanguagePack object, get a LangPackModel object describing
@@ -254,7 +256,7 @@ class Client(object):
         url = device.lang_pack_model_url
         if url not in self._lang_pack_model:
             self._lang_pack_model[url] = device.load_lang_pack_model()
-        return self._lang_pack_model[url]
+        return LangPackModel(self._lang_pack_model[url])
 
 
 class DeviceType(enum.Enum):
@@ -394,6 +396,7 @@ class DeviceInfo(object):
 
 BitValue = namedtuple('BitValue', ['options'])
 EnumValue = namedtuple('EnumValue', ['options'])
+LangValue = namedtuple('LangValue', ['packs'])
 RangeValue = namedtuple('RangeValue', ['min', 'max', 'step'])
 #: This is a value that is a reference to another key in the data that is at
 #: the same level as the `Value` key.
@@ -542,6 +545,30 @@ class LangPackProduct(object):
     def __init__(self, data):
         self.data = data
 
+    def value(self, name: str):
+        """Look up information about a value.
+        """
+        d = self.data['pack']
+        return LangValue(d)
+
+    def enum_value(self, key, name):
+        """Look up the encoded value for a friendly enum name.
+        """
+        packs = self.value(key).packs
+        packs_inv = {v: k for k, v in packs.items()}  # Invert the map.
+        return packs_inv[name]
+
+    def enum_name(self, key, value):
+        """Look up the friendly enum name for an encoded value.
+        """
+        packs = self.value(key).packs
+        if value not in packs:
+            logging.warning(
+                'Value `%s` for key `%s` not in packs: %s. Values from API: '
+                '%s', value, key, packs, self.data['pack'])
+            return _UNKNOWN
+        return packs[value]
+
     def decode_monitor(self, data):
         return json.loads(self)
 
@@ -551,6 +578,30 @@ class LangPackModel(object):
 
     def __init__(self, data):
         self.data = data
+
+    def value(self, name: str):
+        """Look up information about a value.
+        """
+        d = self.data['pack']
+        return LangValue(d)
+
+    def enum_value(self, key, name):
+        """Look up the encoded value for a friendly enum name.
+        """
+        packs = self.value(key).packs
+        packs_inv = {v: k for k, v in packs.items()}  # Invert the map.
+        return packs_inv[name]
+
+    def enum_name(self, key, value):
+        """Look up the friendly enum name for an encoded value.
+        """
+        packs = self.value(key).packs
+        if value not in packs:
+            logging.warning(
+                'Value `%s` for key `%s` not in packs: %s. Values from API: '
+                '%s', value, key, packs, self.data['pack'])
+            return _UNKNOWN
+        return packs[value]
 
     def decode_monitor(self, data):
         return json.loads(self)

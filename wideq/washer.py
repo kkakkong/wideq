@@ -77,7 +77,7 @@ class WasherStatus(object):
     @property
     def is_on(self) -> bool:
         """Check if the washer is on or not."""
-        return self.state != '@WM_STATE_POWER_OFF_W'
+        return self.state != 'Off'
 
     @property
     def remaining_time(self) -> int:

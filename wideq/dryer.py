@@ -63,6 +63,10 @@ class DryerStatus(object):
         value = lookup_enum(key, self.data, self.dryer)
         if value is None:
             return 'Off'
+        if value == '세탁 중':
+            return '건조 중'
+        if value == '전원 OFF':
+            return 'Off'
         return value
 
     @property
@@ -85,7 +89,7 @@ class DryerStatus(object):
     @property
     def is_on(self) -> bool:
         """Check if the dryer is on or not."""
-        return self.state != '@WM_STATE_POWER_OFF_W'
+        return self.state != 'Off'
 
     @property
     def remaining_time(self) -> int:
