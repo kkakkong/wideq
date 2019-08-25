@@ -6,6 +6,9 @@ A library for interacting with the "LG SmartThinq" system, which can control hea
 To try out the API, there is a simple command-line tool included here, called `example.py`.
 To use it, provide it with a country and language code via the `-c` and `-l` flags, respectively:
 
+    $ git clone https://github.com/gugu927/wideq.git
+    $ pip install ./wideq
+
     $ python3 example.py -c KR -l ko-KR
 
 LG accounts seem to be associated with specific countries, so be sure to use the one with which you originally created your account.
