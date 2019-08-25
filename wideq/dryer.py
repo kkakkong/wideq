@@ -130,6 +130,4 @@ class DryerStatus(object):
         """Get the current error."""
         key = 'Error'
         value = lookup_reference_title(key, self.data, self.dryer)
-        if value == "ERROR_NOERROR_TITLE":
-            return "No"
         return value

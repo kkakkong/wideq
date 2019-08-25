@@ -4,22 +4,22 @@ from .client import Device
 from .util import lookup_enum, lookup_enum_value, lookup_reference_name, lookup_reference_title, lookup_reference_comment, lookup_lang
 
 class DehumOperation(enum.Enum):
-    ON = "@operation_on"
-    OFF = "@operation_off"
-    스마트제습 = "@AP_MAIN_MID_OPMODE_SMART_DEHUM_W"
-    쾌속제습 = "@AP_MAIN_MID_OPMODE_FAST_DEHUM_W"
-    저소음제습 = "@AP_MAIN_MID_OPMODE_CILENT_DEHUM_W"
-    집중건조 = "@AP_MAIN_MID_OPMODE_CONCENTRATION_DRY_W"
-    의류건조 = "@AP_MAIN_MID_OPMODE_CLOTHING_DRY_W"
-    공기제균 = "@AP_MAIN_MID_OPMODE_IONIZER_W"
+    ON = '@operation_on'
+    OFF = '@operation_off'
+    스마트제습 = '@AP_MAIN_MID_OPMODE_SMART_DEHUM_W'
+    쾌속제습 = '@AP_MAIN_MID_OPMODE_FAST_DEHUM_W'
+    저소음제습 = '@AP_MAIN_MID_OPMODE_CILENT_DEHUM_W'
+    집중건조 = '@AP_MAIN_MID_OPMODE_CONCENTRATION_DRY_W'
+    의류건조 = '@AP_MAIN_MID_OPMODE_CLOTHING_DRY_W'
+    공기제균 = '@AP_MAIN_MID_OPMODE_IONIZER_W'
 
 class DehumWindStrength(enum.Enum):
-    약 = "@AP_MAIN_MID_WINDSTRENGTH_DHUM_LOW_W"
-    강 = "@AP_MAIN_MID_WINDSTRENGTH_DHUM_HIGH_W"
+    약 = '@AP_MAIN_MID_WINDSTRENGTH_DHUM_LOW_W'
+    강 = '@AP_MAIN_MID_WINDSTRENGTH_DHUM_HIGH_W'
 
 class DehumAIRREMOVAL(enum.Enum):
-    OFF = "@AP_OFF_W"
-    ON = "@AP_ON_W"
+    OFF = '@AP_OFF_W'
+    ON = '@AP_ON_W'
 
 class DehumDevice(Device):
     """A higher-level interface for a dehum."""

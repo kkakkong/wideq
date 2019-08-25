@@ -120,8 +120,4 @@ class WasherStatus(object):
         """Get the current error."""
         key = 'Error'
         value = lookup_reference_title(key, self.data, self.washer)
-        if value == "ERROR_NOERROR_TITLE":
-            return "No"
-        if value == "No_Error":
-            return "No"
         return value

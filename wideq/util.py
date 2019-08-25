@@ -61,12 +61,12 @@ def lookup_reference_name(attr: str, data: dict, device: T) -> str:
     if value is None:
         return 'Off'
     try:
-        lang = device.lang_product['pack'][device.model.value(attr).reference.get(value, value)]
+        lang = device.lang_product.enum_name(attr, value)
     except KeyError:
         lang = value
     if str.find(lang, '@WM') != -1:
         try:
-            lang = device.lang_model['pack'][device.model.value(attr).reference.get(value, value)]
+            lang = device.lang_model.enum_name(attr, value)
         except KeyError:
             lang = value
     return lang
@@ -82,13 +82,17 @@ def lookup_reference_title(attr: str, data: dict, device: T) -> str:
     value = device.model.reference_title(attr, data[attr])
     if value is None:
         return 'Off'
+    if value == "ERROR_NOERROR_TITLE":
+        return "No"
+    if value == "No_Error":
+        return "No"
     try:
-        lang = device.lang_product['pack'][device.model.value(attr).reference.get(value, value)]
+        lang = device.lang_product.enum_name(attr, value)
     except KeyError:
         lang = value
     if str.find(lang, '@WM') != -1:
         try:
-            lang = device.lang_model['pack'][device.model.value(attr).reference.get(value, value)]
+            lang = device.lang_model.enum_name(attr, value)
         except KeyError:
             lang = value
     return lang
@@ -105,12 +109,12 @@ def lookup_reference_comment(attr: str, data: dict, device: T) -> str:
     if value is None:
         return 'Off'
     try:
-        lang = device.lang_product['pack'][device.model.value(attr).reference.get(value, value)]
+        lang = device.lang_product.enum_name(attr, value)
     except KeyError:
         lang = value
     if str.find(lang, '@WM') != -1:
         try:
-            lang = device.lang_model['pack'][device.model.value(attr).reference.get(value, value)]
+            lang = device.lang_model.enum_name(attr, value)
         except KeyError:
             lang = value
     return lang
