@@ -1,7 +1,7 @@
 import enum
 from typing import Optional
 from .client import Device
-from .util import lookup_enum, lookup_reference_name, lookup_reference_title, lookup_reference_comment
+from .util import lookup_enum, lookup_reference_name, lookup_reference_title, lookup_reference_comment, lookup_lang
 
 class WasherDevice(Device):
     """A higher-level interface for a washer."""
@@ -60,7 +60,7 @@ class WasherStatus(object):
     def state(self):
         """Get the state of the washer."""
         key = 'State'
-        value = lookup_enum(key, self.data, self.washer)
+        value = lookup_lang(key, self.data, self.washer)
         if value is None:
             return 'Off'
         return value
@@ -69,7 +69,7 @@ class WasherStatus(object):
     def previous_state(self):
         """Get the previous state of the washer."""
         key = 'PreState'
-        value = lookup_enum(key, self.data, self.washer)
+        value = lookup_lang(key, self.data, self.washer)
         if value is None:
             return 'Off'
         return value

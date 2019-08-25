@@ -1,7 +1,7 @@
 import enum
 from typing import Optional
 from .client import Device
-from .util import lookup_enum, lookup_reference_name, lookup_reference_title, lookup_reference_comment
+from .util import lookup_enum, lookup_reference_name, lookup_reference_title, lookup_reference_comment, lookup_lang
 
 class DryerDevice(Device):
     """A higher-level interface for a dryer."""
@@ -60,7 +60,7 @@ class DryerStatus(object):
     def state(self):
         """Get the state of the dryer."""
         key = 'State'
-        value = lookup_enum(key, self.data, self.dryer)
+        value = lookup_lang(key, self.data, self.dryer)
         if value is None:
             return 'Off'
         if value == '세탁 중':
@@ -73,7 +73,7 @@ class DryerStatus(object):
     def dry_level(self):
         """Get the dry level."""
         key = 'DryLevel'
-        value = lookup_enum(key, self.data, self.dryer)
+        value = lookup_lang(key, self.data, self.dryer)
         if value is None:
             return 'Off'
         if value == '-':
@@ -83,7 +83,7 @@ class DryerStatus(object):
     @property
     def process_state(self):
         key = 'ProcessState'
-        value = lookup_enum(key, self.data, self.dryer)
+        value = lookup_lang(key, self.data, self.dryer)
         return value
 
     @property
