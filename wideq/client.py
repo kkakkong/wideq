@@ -460,9 +460,9 @@ class ModelInfo(object):
         """
         options = self.value(key).options
         if value not in options:
-            logging.warning(
-                'Value `%s` for key `%s` not in options: %s. Values from API: '
-                '%s', value, key, options, self.data['Value'][key]['option'])
+            #logging.warning(
+            #    'Value `%s` for key `%s` not in options: %s. Values from API: '
+            #    '%s', value, key, options, self.data['Value'][key]['option'])
             return _UNKNOWN
         return options[value]
 
@@ -563,9 +563,9 @@ class LangPackProduct(object):
         """
         packs = self.value(key).packs
         if value not in packs:
-            logging.warning(
-                'Value `%s` for key `%s` not in packs: %s. Values from API: '
-                '%s', value, key, packs, self.data['pack'])
+            #logging.warning(
+            #    'Value `%s` for key `%s` not in packs: %s. Values from API: '
+            #    '%s', value, key, packs, self.data['pack'])
             return _UNKNOWN
         return packs[value]
 
@@ -597,9 +597,9 @@ class LangPackModel(object):
         """
         packs = self.value(key).packs
         if value not in packs:
-            logging.warning(
-                'Value `%s` for key `%s` not in packs: %s. Values from API: '
-                '%s', value, key, packs, self.data['pack'])
+            #logging.warning(
+            #    'Value `%s` for key `%s` not in packs: %s. Values from API: '
+            #    '%s', value, key, packs, self.data['pack'])
             return _UNKNOWN
         return packs[value]
 

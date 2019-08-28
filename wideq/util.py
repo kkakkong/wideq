@@ -3,7 +3,28 @@ from .client import Device
 
 T = TypeVar('T', bound=Device)
 
-def lookup_lang(attr: str, data: dict, device: T):
+def lookup_lang(attr: str, value: str, device: T):
+    """Looks up an enum value for the provided attr.
+
+    :param attr: The attribute to lookup in the enum.
+    :param data: The JSON data from the API.
+    :param device: A sub-class instance of a Device.
+    :returns: The enum value.
+    """
+    if value is None:
+        return '꺼짐'
+    if value == '@operation_on':
+        return '켜짐'
+    elif value == '@operation_off':
+        return '꺼짐'
+    lang = device.lang_product.enum_name(attr, value)
+    if lang == 'Unknown':
+        lang = device.lang_model.enum_name(attr, value)
+    if lang == 'Unknown':
+        lang = value
+    return str(lang)
+
+def lookup_enum_lang(attr: str, data: dict, device: T):
     """Looks up an enum value for the provided attr.
 
     :param attr: The attribute to lookup in the enum.
@@ -13,21 +34,17 @@ def lookup_lang(attr: str, data: dict, device: T):
     """
     value = device.model.enum_name(attr, data[attr])
     if value is None:
-        return 'Off'
+        return '꺼짐'
     if value == '@operation_on':
-        return 'On'
+        return '켜짐'
     elif value == '@operation_off':
-        return 'Off'
-    try:
-        lang = device.lang_product.enum_name(attr, value)
-    except KeyError:
+        return '꺼짐'
+    lang = device.lang_product.enum_name(attr, value)
+    if lang == 'Unknown':
+        lang = device.lang_model.enum_name(attr, value)
+    if lang == 'Unknown':
         lang = value
-    if str.find(lang, '@WM') != -1:
-        try:
-            lang = device.lang_model.enum_name(attr, value)
-        except KeyError:
-            lang = value
-    return lang
+    return str(lang)
 
 def lookup_enum(attr: str, data: dict, device: T):
     """Looks up an enum value for the provided attr.
@@ -37,7 +54,7 @@ def lookup_enum(attr: str, data: dict, device: T):
     :param device: A sub-class instance of a Device.
     :returns: The enum value.
     """
-    return device.model.enum_name(attr, data[attr])
+    return str(device.model.enum_name(attr, data[attr]))
 
 def lookup_enum_value(attr: str, data: dict, device: T):
     """Looks up an enum value for the provided attr.
@@ -47,7 +64,7 @@ def lookup_enum_value(attr: str, data: dict, device: T):
     :param device: A sub-class instance of a Device.
     :returns: The enum value.
     """
-    return device.model.enum_value(attr, data[attr])
+    return str(device.model.enum_value(attr, data[attr]))
 
 def lookup_reference_name(attr: str, data: dict, device: T) -> str:
     """Look up a reference value for the provided attribute.
@@ -59,17 +76,13 @@ def lookup_reference_name(attr: str, data: dict, device: T) -> str:
     """
     value = device.model.reference_name(attr, data[attr])
     if value is None:
-        return 'Off'
-    try:
-        lang = device.lang_product.enum_name(attr, value)
-    except KeyError:
+        return '꺼짐'
+    lang = device.lang_product.enum_name(attr, value)
+    if lang == 'Unknown':
+        lang = device.lang_model.enum_name(attr, value)
+    if lang == 'Unknown':
         lang = value
-    if str.find(lang, '@WM') != -1:
-        try:
-            lang = device.lang_model.enum_name(attr, value)
-        except KeyError:
-            lang = value
-    return lang
+    return str(lang)
 
 def lookup_reference_title(attr: str, data: dict, device: T) -> str:
     """Look up a reference value for the provided attribute.
@@ -81,21 +94,17 @@ def lookup_reference_title(attr: str, data: dict, device: T) -> str:
     """
     value = device.model.reference_title(attr, data[attr])
     if value is None:
-        return 'Off'
+        return '꺼짐'
     if value == "ERROR_NOERROR_TITLE":
-        return "No"
+        return "없음"
     if value == "No_Error":
-        return "No"
-    try:
-        lang = device.lang_product.enum_name(attr, value)
-    except KeyError:
+        return "없음"
+    lang = device.lang_product.enum_name(attr, value)
+    if lang == 'Unknown':
+        lang = device.lang_model.enum_name(attr, value)
+    if lang == 'Unknown':
         lang = value
-    if str.find(lang, '@WM') != -1:
-        try:
-            lang = device.lang_model.enum_name(attr, value)
-        except KeyError:
-            lang = value
-    return lang
+    return str(lang)
 
 def lookup_reference_comment(attr: str, data: dict, device: T) -> str:
     """Look up a reference value for the provided attribute.
@@ -107,14 +116,10 @@ def lookup_reference_comment(attr: str, data: dict, device: T) -> str:
     """
     value = device.model.reference_comment(attr, data[attr])
     if value is None:
-        return 'Off'
-    try:
-        lang = device.lang_product.enum_name(attr, value)
-    except KeyError:
+        return '꺼짐'
+    lang = device.lang_product.enum_name(attr, value)
+    if lang == 'Unknown':
+        lang = device.lang_model.enum_name(attr, value)
+    if lang == 'Unknown':
         lang = value
-    if str.find(lang, '@WM') != -1:
-        try:
-            lang = device.lang_model.enum_name(attr, value)
-        except KeyError:
-            lang = value
-    return lang
+    return str(lang)

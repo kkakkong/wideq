@@ -1,7 +1,7 @@
 import enum
 from typing import Optional
 from .client import Device
-from .util import lookup_enum, lookup_reference_name, lookup_reference_title, lookup_reference_comment, lookup_lang
+from .util import lookup_lang, lookup_enum, lookup_enum_lang, lookup_enum_value, lookup_reference_name, lookup_reference_title, lookup_reference_comment
 
 class DryerDevice(Device):
     """A higher-level interface for a dryer."""
@@ -42,9 +42,9 @@ class DryerStatus(object):
         bit_index = 2 ** index
         mode = bin(bit_value & bit_index)
         if mode == bin(0):
-            return 'OFF'
+            return '꺼짐'
         else:
-            return 'ON'
+            return '켜짐'
 
     @property
     def device_name(self):
@@ -60,36 +60,25 @@ class DryerStatus(object):
     def state(self):
         """Get the state of the dryer."""
         key = 'State'
-        value = lookup_lang(key, self.data, self.dryer)
+        value = lookup_enum_lang(key, self.data, self.dryer)
         if value is None:
-            return 'Off'
+            return '꺼짐'
         if value == '세탁 중':
             return '건조 중'
         if value == '전원 OFF':
-            return 'Off'
-        return value
-
-    @property
-    def dry_level(self):
-        """Get the dry level."""
-        key = 'DryLevel'
-        value = lookup_lang(key, self.data, self.dryer)
-        if value is None:
-            return 'Off'
-        if value == '-':
-            return 'Off'
+            return '꺼짐'
         return value
 
     @property
     def process_state(self):
         key = 'ProcessState'
-        value = lookup_lang(key, self.data, self.dryer)
+        value = lookup_enum_lang(key, self.data, self.dryer)
         return value
 
     @property
     def is_on(self) -> bool:
         """Check if the dryer is on or not."""
-        return self.state != 'Off'
+        return self.state != '꺼짐'
 
     @property
     def remaining_time(self) -> int:
@@ -131,3 +120,55 @@ class DryerStatus(object):
         key = 'Error'
         value = lookup_reference_title(key, self.data, self.dryer)
         return value
+
+    @property
+    def dry_level(self):
+        """Get the dry level."""
+        key = 'DryLevel'
+        value = lookup_enum_lang(key, self.data, self.dryer)
+        if value is None:
+            return '꺼짐'
+        if value == '-':
+            return '꺼짐'
+        return value
+
+    @property
+    def eco_hybrid(self):
+        """Get the eco hybrid."""
+        key = 'EcoHybrid'
+        value = lookup_enum_lang(key, self.data, self.dryer)
+        if value is None:
+            return '꺼짐'
+        if value == '-':
+            return '꺼짐'
+        return value
+
+    @property
+    def anti_crease(self):
+        key = 'Option1'
+        index = 1
+        return self.get_bit(key, index)
+
+    @property
+    def child_lock(self):
+        key = 'Option1'
+        index = 4
+        return self.get_bit(key, index)
+
+    @property
+    def self_cleaning(self):
+        key = 'Option1'
+        index = 5
+        return self.get_bit(key, index)
+
+    @property
+    def damp_dry_beep(self):
+        key = 'Option1'
+        index = 6
+        return self.get_bit(key, index)
+
+    @property
+    def hand_iron(self):
+        key = 'Option1'
+        index = 7
+        return self.get_bit(key, index)

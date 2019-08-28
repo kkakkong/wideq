@@ -36,7 +36,6 @@ def mon(client, device_id):
 
     device = client.get_device(device_id)
     model = client.model_info(device)
-    lang_prodcuct = client.lang_pack_product(device)
 
     with wideq.Monitor(client.session, device_id) as mon:
         try:
@@ -60,13 +59,8 @@ def mon(client, device_id):
                             except KeyError:
                                 print('- {}: {}'.format(key, value))
                             if isinstance(desc, wideq.EnumValue):
-                                try:
-                                    lang_value = lang_prodcuct['pack'][desc.options.get(value, value)]
-                                except KeyError:
-                                    lang_value = desc.options.get(value, value)
                                 print('- {}: {}'.format(
                                     key, desc.options.get(value, value)
-                                    # key, lang_value
                                 ))
                             elif isinstance(desc, wideq.RangeValue):
                                 print('- {0}: {1} ({2.min}-{2.max})'.format(
@@ -135,7 +129,25 @@ def washer_mon(client, device_id):
                 print('previous_state: ', state.previous_state)
                 print('smart_course: ', state.smart_course)
                 print('course: ', state.course)
-                print('error: ', state.error)   
+                print('error: ', state.error)
+                print('soil_level: ', state.soil_level)
+                print('water_temp: ', state.water_temp)
+                print('spin_speed: ', state.spin_speed)
+                print('rinse_count: ', state.rinse_count)
+                print('dry_level: ', state.dry_level)
+                print('water_level: ', state.water_level)
+                print('water_flow: ', state.water_flow)
+                print('soak: ', state.soak)
+                print('fresh_care: ', state.fresh_care)
+                print('child_lock: ', state.child_lock)
+                print('door_lock: ', state.door_lock)
+                print('steam: ', state.steam)
+                print('turbo_shot: ', state.turbo_shot)
+                print('buzzer: ', state.buzzer)
+                print('sterilize: ', state.sterilize)
+                print('heater: ', state.heater)
+                print('tubclean_count: ', state.tubclean_count)
+                print('load_level: ', state.load_level)
                 if DEBUG_MODE:
                     with open(device.name + '_polling.json', 'w', -1, 'utf-8') as outfile:
                         json.dump(state.data, outfile, ensure_ascii=False, indent="\t")
@@ -171,6 +183,13 @@ def dryer_mon(client, device_id):
                 print('smart_course: ', state.smart_course)
                 print('course: ', state.course)
                 print('error: ', state.error)
+                print('dry_level: ', state.dry_level)
+                print('eco_hybrid: ', state.eco_hybrid)
+                print('anti_crease: ', state.anti_crease)
+                print('child_lock: ', state.child_lock)
+                print('self_cleaning: ', state.self_cleaning)
+                print('damp_dry_beep: ', state.damp_dry_beep)
+                print('hand_iron: ', state.hand_iron)
                 if DEBUG_MODE:
                     with open(device.name + '_polling.json', 'w', -1, 'utf-8') as outfile:
                         json.dump(state.data, outfile, ensure_ascii=False, indent="\t")

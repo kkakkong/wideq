@@ -1,7 +1,7 @@
 import enum
 from typing import Optional
 from .client import Device
-from .util import lookup_enum, lookup_enum_value, lookup_reference_name, lookup_reference_title, lookup_reference_comment, lookup_lang
+from .util import lookup_lang, lookup_enum, lookup_enum_lang, lookup_enum_value, lookup_reference_name, lookup_reference_title, lookup_reference_comment
 
 class DehumOperation(enum.Enum):
     ON = '@operation_on'
@@ -113,7 +113,7 @@ class DehumStatus(object):
     def state(self):
         """Get the state of the dryer."""
         key = 'Operation'
-        value = lookup_lang(key, self.data, self.dehum)
+        value = lookup_enum_lang(key, self.data, self.dehum)
         if value is None:
             return 'Off'
         return value
@@ -121,19 +121,19 @@ class DehumStatus(object):
     @property
     def mode(self):
         key = 'OpMode'
-        value = lookup_lang(key, self.data, self.dehum)
+        value = lookup_enum_lang(key, self.data, self.dehum)
         return value
 
     @property
     def windstrength_state(self):
         key = 'WindStrength'
-        value = lookup_lang(key, self.data, self.dehum)
+        value = lookup_enum_lang(key, self.data, self.dehum)
         return value
 
     @property
     def airremoval_state(self):
         key = 'AirRemoval'
-        value = lookup_lang(key, self.data, self.dehum)
+        value = lookup_enum_lang(key, self.data, self.dehum)
         return value
 
     @property
