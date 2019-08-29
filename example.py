@@ -36,6 +36,9 @@ def mon(client, device_id):
 
     device = client.get_device(device_id)
     model = client.model_info(device)
+    device.load_model_info
+    device.load_lang_pack_product
+    device.load_lang_pack_model
 
     with wideq.Monitor(client.session, device_id) as mon:
         try:

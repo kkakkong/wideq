@@ -3,6 +3,10 @@ from typing import Optional
 from .client import Device
 from .util import lookup_lang, lookup_enum, lookup_enum_lang, lookup_enum_value, lookup_reference_name, lookup_reference_title, lookup_reference_comment
 
+KEY_ON = '켜짐'
+KEY_OFF = '꺼짐'
+KEY_UNSUPPORT = '미지원'
+
 class DryerDevice(Device):
     """A higher-level interface for a dryer."""
 
@@ -42,9 +46,9 @@ class DryerStatus(object):
         bit_index = 2 ** index
         mode = bin(bit_value & bit_index)
         if mode == bin(0):
-            return '꺼짐'
+            return KEY_OFF
         else:
-            return '켜짐'
+            return KEY_ON
 
     @property
     def device_name(self):
@@ -62,11 +66,11 @@ class DryerStatus(object):
         key = 'State'
         value = lookup_enum_lang(key, self.data, self.dryer)
         if value is None:
-            return '꺼짐'
+            return KEY_OFF
         if value == '세탁 중':
             return '건조 중'
         if value == '전원 OFF':
-            return '꺼짐'
+            return KEY_OFF
         return value
 
     @property
@@ -78,7 +82,7 @@ class DryerStatus(object):
     @property
     def is_on(self) -> bool:
         """Check if the dryer is on or not."""
-        return self.state != '꺼짐'
+        return self.state != KEY_OFF
 
     @property
     def remaining_time(self) -> int:
@@ -127,9 +131,9 @@ class DryerStatus(object):
         key = 'DryLevel'
         value = lookup_enum_lang(key, self.data, self.dryer)
         if value is None:
-            return '꺼짐'
+            return KEY_OFF
         if value == '-':
-            return '꺼짐'
+            return KEY_OFF
         return value
 
     @property
@@ -138,9 +142,9 @@ class DryerStatus(object):
         key = 'EcoHybrid'
         value = lookup_enum_lang(key, self.data, self.dryer)
         if value is None:
-            return '꺼짐'
+            return KEY_OFF
         if value == '-':
-            return '꺼짐'
+            return KEY_OFF
         return value
 
     @property

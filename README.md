@@ -22,11 +22,13 @@ You can also specify one of several other commands:
 
 * `ls`: List devices (the default).
 * `mon <ID>`: Monitor a device continuously, printing out status information until you type control-C. Provide a device ID obtained from listing your devices.
+* `washer-mon <ID>`: Like `mon`, but only for WASHER devices---prints out specific washer-related information in a more readable form.
+* `dryer-mon <ID>`: Like `mon`, but only for DRYER devices---prints out specific dryer-related information in a more readable form.
+* `dehum-mon <ID>`: Like `mon`, but only for DEHUMIDIFIER devices---prints out dehumidifier-related information in a more readable form.
 * `ac-mon <ID>`: Like `mon`, but only for AC devices---prints out specific climate-related information in a more readable form.
 * `set-temp <ID> <TEMP>`: Set the target temperature for an AC device.
 * `turn <ID> <ONOFF>`: Turn an AC device on or off. Use "on" or "off" as the second argument.
 * `ac-config <ID>`: Print out some configuration information about an AC device.
-
 
 Credits
 -------
@@ -35,6 +37,9 @@ This is by [GuGu927][andy].
 The license is [MIT][].
 I also made a [Home Assistant component][hass-smartthinq] that uses wideq.
 
+This library originated from [Adrian Sampson][sampson]
+
 [hass-smartthinq]: https://github.com/gugu927/hass-smartthinq
 [andy]: https://github.com/gugu927
 [mit]: https://opensource.org/licenses/MIT
+[sampson]: https://github.com/sampsyo/wideq

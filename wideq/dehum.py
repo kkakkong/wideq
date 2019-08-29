@@ -3,6 +3,9 @@ from typing import Optional
 from .client import Device
 from .util import lookup_lang, lookup_enum, lookup_enum_lang, lookup_enum_value, lookup_reference_name, lookup_reference_title, lookup_reference_comment
 
+KEY_ON = 'on'
+KEY_OFF = 'off'
+
 class DehumOperation(enum.Enum):
     ON = '@operation_on'
     OFF = '@operation_off'
@@ -90,9 +93,9 @@ class DehumStatus(object):
         bit_index = 2 ** index
         mode = bin(bit_value & bit_index)
         if mode == bin(0):
-            return 'OFF'
+            return KEY_OFF
         else:
-            return 'ON'
+            return KEY_ON
 
     @property
     def device_name(self):
@@ -115,7 +118,7 @@ class DehumStatus(object):
         key = 'Operation'
         value = lookup_enum_lang(key, self.data, self.dehum)
         if value is None:
-            return 'Off'
+            return KEY_OFF
         return value
 
     @property

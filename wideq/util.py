@@ -2,6 +2,9 @@ from typing import TypeVar
 from .client import Device
 
 T = TypeVar('T', bound=Device)
+_UNKNOWN = 'Unknown'
+KEY_OFF = '꺼짐'
+KEY_ON = '켜짐'
 
 def lookup_lang(attr: str, value: str, device: T):
     """Looks up an enum value for the provided attr.
@@ -12,15 +15,15 @@ def lookup_lang(attr: str, value: str, device: T):
     :returns: The enum value.
     """
     if value is None:
-        return '꺼짐'
+        return KEY_OFF
     if value == '@operation_on':
-        return '켜짐'
+        return KEY_ON
     elif value == '@operation_off':
-        return '꺼짐'
+        return KEY_OFF
     lang = device.lang_product.enum_name(attr, value)
-    if lang == 'Unknown':
+    if lang == _UNKNOWN:
         lang = device.lang_model.enum_name(attr, value)
-    if lang == 'Unknown':
+    if lang == _UNKNOWN:
         lang = value
     return str(lang)
 
@@ -34,15 +37,15 @@ def lookup_enum_lang(attr: str, data: dict, device: T):
     """
     value = device.model.enum_name(attr, data[attr])
     if value is None:
-        return '꺼짐'
+        return KEY_OFF
     if value == '@operation_on':
-        return '켜짐'
+        return KEY_ON
     elif value == '@operation_off':
-        return '꺼짐'
+        return KEY_OFF
     lang = device.lang_product.enum_name(attr, value)
-    if lang == 'Unknown':
+    if lang == _UNKNOWN:
         lang = device.lang_model.enum_name(attr, value)
-    if lang == 'Unknown':
+    if lang == _UNKNOWN:
         lang = value
     return str(lang)
 
@@ -76,11 +79,11 @@ def lookup_reference_name(attr: str, data: dict, device: T) -> str:
     """
     value = device.model.reference_name(attr, data[attr])
     if value is None:
-        return '꺼짐'
+        return KEY_OFF
     lang = device.lang_product.enum_name(attr, value)
-    if lang == 'Unknown':
+    if lang == _UNKNOWN:
         lang = device.lang_model.enum_name(attr, value)
-    if lang == 'Unknown':
+    if lang == _UNKNOWN:
         lang = value
     return str(lang)
 
@@ -94,15 +97,15 @@ def lookup_reference_title(attr: str, data: dict, device: T) -> str:
     """
     value = device.model.reference_title(attr, data[attr])
     if value is None:
-        return '꺼짐'
+        return KEY_OFF
     if value == "ERROR_NOERROR_TITLE":
         return "없음"
     if value == "No_Error":
         return "없음"
     lang = device.lang_product.enum_name(attr, value)
-    if lang == 'Unknown':
+    if lang == _UNKNOWN:
         lang = device.lang_model.enum_name(attr, value)
-    if lang == 'Unknown':
+    if lang == _UNKNOWN:
         lang = value
     return str(lang)
 
@@ -116,10 +119,10 @@ def lookup_reference_comment(attr: str, data: dict, device: T) -> str:
     """
     value = device.model.reference_comment(attr, data[attr])
     if value is None:
-        return '꺼짐'
+        return KEY_OFF
     lang = device.lang_product.enum_name(attr, value)
-    if lang == 'Unknown':
+    if lang == _UNKNOWN:
         lang = device.lang_model.enum_name(attr, value)
-    if lang == 'Unknown':
+    if lang == _UNKNOWN:
         lang = value
     return str(lang)

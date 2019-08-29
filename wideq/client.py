@@ -17,7 +17,6 @@ DEFAULT_LANGUAGE = 'ko-KR'
 _UNKNOWN = 'Unknown'
 DEBUG_MODE = False
 
-
 class Monitor(object):
     """A monitoring task for a device.
 
@@ -366,21 +365,25 @@ class DeviceInfo(object):
                 json.dump(self.data, outfile, ensure_ascii=False, indent="\t")
         return DeviceType(self.data['deviceType'])
 
+    @property
     def load_model_info(self):
-        """Load JSON data describing the model's capabilities.
-        """
-        return requests.get(self.model_info_url).json()
-
-    def load_lang_pack_product(self):
         """Load JSON data describing the model's capabilities.
         """
         if DEBUG_MODE:
             with open('json_{}_{}({}).json'.format(DeviceTypeKor(self.data['deviceType']).name, self.model_id, self.name), 'w', -1, 'utf-8') as outfile:
                 json.dump(requests.get(self.model_info_url).json(), outfile, ensure_ascii=False, indent="\t")
+        return requests.get(self.model_info_url).json()
+
+    @property
+    def load_lang_pack_product(self):
+        """Load JSON data describing the model's capabilities.
+        """
+        if DEBUG_MODE:
             with open('lang_prodcut_{}_{}({}).json'.format(DeviceTypeKor(self.data['deviceType']).name, self.model_id, self.name), 'w', -1, 'utf-8') as outfile:
                 json.dump(requests.get(self.lang_pack_product_url).json(), outfile, ensure_ascii=False, indent="\t")
         return requests.get(self.lang_pack_product_url).json()
 
+    @property
     def load_lang_pack_model(self):
         """Load JSON data describing the model's capabilities.
         """

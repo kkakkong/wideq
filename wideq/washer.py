@@ -3,6 +3,10 @@ from typing import Optional
 from .client import Device
 from .util import lookup_lang, lookup_enum, lookup_enum_lang, lookup_enum_value, lookup_reference_name, lookup_reference_title, lookup_reference_comment
 
+KEY_ON = '켜짐'
+KEY_OFF = '꺼짐'
+KEY_UNSUPPORT = '미지원'
+
 RinseCount = {
     '0':'선택 안 함',
     '1': '1회',
@@ -11,6 +15,14 @@ RinseCount = {
     '4': '4회',
     '5': '5회',
     '6': '6회',
+}
+
+LoadLevel = {
+    '0':'선택 안 함',
+    '1': '소량',
+    '2': '적음',
+    '3': '보통',
+    '4': '많음',
 }
 
 class WasherDevice(Device):
@@ -52,9 +64,9 @@ class WasherStatus(object):
         bit_index = 2 ** index
         mode = bin(bit_value & bit_index)
         if mode == bin(0):
-            return '꺼짐'
+            return KEY_OFF
         else:
-            return '켜짐'
+            return KEY_ON
 
     @property
     def device_name(self):
@@ -72,7 +84,7 @@ class WasherStatus(object):
         key = 'State'
         value = lookup_enum_lang(key, self.data, self.washer)
         if value is None:
-            return '꺼짐'
+            return KEY_OFF
         return value
 
     @property
@@ -81,13 +93,13 @@ class WasherStatus(object):
         key = 'PreState'
         value = lookup_enum_lang(key, self.data, self.washer)
         if value is None:
-            return '꺼짐'
+            return KEY_OFF
         return value
 
     @property
     def is_on(self) -> bool:
         """Check if the washer is on or not."""
-        return self.state != '꺼짐'
+        return self.state != KEY_OFF
 
     @property
     def remaining_time(self) -> int:
@@ -141,13 +153,13 @@ class WasherStatus(object):
         key = 'SoilLevel'
         value = lookup_enum(key, self.data, self.washer)
         if value is None:
-            return '꺼짐'
+            return KEY_OFF
         elif value == '-':
-            return '꺼짐'
+            return KEY_OFF
         elif value == 'ON':
-            return '켜짐'
+            return KEY_ON
         elif value == 'OFF':
-            return '꺼짐'
+            return KEY_OFF
         value = lookup_enum_lang(key, self.data, self.washer)
         return value
 
@@ -158,13 +170,13 @@ class WasherStatus(object):
             key = 'WTemp'
         value = lookup_enum(key, self.data, self.washer)
         if value is None:
-            return '꺼짐'
+            return KEY_OFF
         elif value == '-':
-            return '꺼짐'
+            return KEY_OFF
         elif value == 'ON':
-            return '켜짐'
+            return KEY_ON
         elif value == 'OFF':
-            return '꺼짐'
+            return KEY_OFF
         value = lookup_enum_lang(key, self.data, self.washer)
         return value
 
@@ -173,13 +185,13 @@ class WasherStatus(object):
         key = 'SpinSpeed'
         value = lookup_enum(key, self.data, self.washer)
         if value is None:
-            return '꺼짐'
+            return KEY_OFF
         elif value == '-':
-            return '꺼짐'
+            return KEY_OFF
         elif value == 'ON':
-            return '켜짐'
+            return KEY_ON
         elif value == 'OFF':
-            return '꺼짐'
+            return KEY_OFF
         value = lookup_enum_lang(key, self.data, self.washer)
         return value
 
@@ -188,33 +200,35 @@ class WasherStatus(object):
         key = 'RinseCount'
         value = lookup_enum(key, self.data, self.washer)
         if value is None:
-            return '꺼짐'
+            return KEY_OFF
         elif value == '-':
-            return '꺼짐'
+            return KEY_OFF
         elif value == 'ON':
-            return '켜짐'
+            return KEY_ON
         elif value == 'OFF':
-            return '꺼짐'
+            return KEY_OFF
         try:
-            value = RinseCount[str(int(value))]
+            value2 = RinseCount[str(int(value))]
         except ValueError:
-            value = lookup_enum_lang(key, self.data, self.washer)
-        return value
+            value2 = lookup_enum_lang(key, self.data, self.washer)
+        else:
+            value2 = value
+        return value2
 
     @property
     def dry_level(self):
         key = 'DryLevel'
         if self.device_type == 'TL':
-            return '없음'
+            return KEY_UNSUPPORT
         value = lookup_enum(key, self.data, self.washer)
         if value is None:
-            return '꺼짐'
+            return KEY_OFF
         elif value == '-':
-            return '꺼짐'
+            return KEY_OFF
         elif value == 'ON':
-            return '켜짐'
+            return KEY_ON
         elif value == 'OFF':
-            return '꺼짐'
+            return KEY_OFF
         value = lookup_enum_lang(key, self.data, self.washer)
         return value
 
@@ -222,16 +236,16 @@ class WasherStatus(object):
     def water_level(self):
         key = 'WLevel'
         if self.device_type == 'FL':
-            return '없음'
+            return KEY_UNSUPPORT
         value = lookup_enum(key, self.data, self.washer)
         if value is None:
-            return '꺼짐'
+            return KEY_OFF
         elif value == '-':
-            return '꺼짐'
+            return KEY_OFF
         elif value == 'ON':
-            return '켜짐'
+            return KEY_ON
         elif value == 'OFF':
-            return '꺼짐'
+            return KEY_OFF
         value = lookup_enum_lang(key, self.data, self.washer)
         return value
 
@@ -239,16 +253,16 @@ class WasherStatus(object):
     def water_flow(self):
         key = 'WFlow'
         if self.device_type == 'FL':
-            return '없음'
+            return KEY_UNSUPPORT
         value = lookup_enum(key, self.data, self.washer)
         if value is None:
-            return '꺼짐'
+            return KEY_OFF
         elif value == '-':
-            return '꺼짐'
+            return KEY_OFF
         elif value == 'ON':
-            return '켜짐'
+            return KEY_ON
         elif value == 'OFF':
-            return '꺼짐'
+            return KEY_OFF
         value = lookup_enum_lang(key, self.data, self.washer)
         return value
 
@@ -256,16 +270,16 @@ class WasherStatus(object):
     def soak(self):
         key = 'Soak'
         if self.device_type == 'FL':
-            return '없음'
+            return KEY_UNSUPPORT
         value = lookup_enum(key, self.data, self.washer)
         if value is None:
-            return '꺼짐'
+            return KEY_OFF
         elif value == '-':
-            return '꺼짐'
+            return KEY_OFF
         elif value == 'ON':
-            return '켜짐'
+            return KEY_ON
         elif value == 'OFF':
-            return '꺼짐'
+            return KEY_OFF
         value = lookup_enum_lang(key, self.data, self.washer)
         return value
 
@@ -274,7 +288,7 @@ class WasherStatus(object):
         key = 'Option1'
         index = 4
         if self.device_type == 'TL':
-            return '없음'
+            return KEY_UNSUPPORT
         return self.get_bit(key, index)
 
     @property
@@ -285,7 +299,7 @@ class WasherStatus(object):
         if self.device_type == 'TL':
           index = 0
         if index == 99:
-            return '없음'
+            return KEY_UNSUPPORT
         return self.get_bit(key, index)
 
     @property
@@ -296,7 +310,7 @@ class WasherStatus(object):
         if self.device_type == 'TL':
           index = 3
         if index == 99:
-            return '없음'
+            return KEY_UNSUPPORT
         return self.get_bit(key, index)
 
     @property
@@ -307,7 +321,7 @@ class WasherStatus(object):
         if self.device_type == 'TL':
           index = 2
         if index == 99:
-            return '없음'
+            return KEY_UNSUPPORT
         return self.get_bit(key, index)
 
     @property
@@ -318,7 +332,7 @@ class WasherStatus(object):
         if self.device_type == 'TL':
           index = 3
         if index == 99:
-            return '없음'
+            return KEY_UNSUPPORT
         return self.get_bit(key, index)
 
     @property
@@ -329,7 +343,7 @@ class WasherStatus(object):
         if self.device_type == 'TL':
           index = 0
         if index == 99:
-            return '없음'
+            return KEY_UNSUPPORT
         return self.get_bit(key, index)
 
     @property
@@ -340,7 +354,7 @@ class WasherStatus(object):
         if self.device_type == 'TL':
           index = 1
         if index == 99:
-            return '없음'
+            return KEY_UNSUPPORT
         return self.get_bit(key, index)
 
     @property
@@ -351,33 +365,29 @@ class WasherStatus(object):
         if self.device_type == 'TL':
           index = 2
         if index == 99:
-            return '없음'
+            return KEY_UNSUPPORT
         return self.get_bit(key, index)
 
     @property
     def tubclean_count(self):
         if self.device_type == 'TL':
-            return '없음'
+            return KEY_UNSUPPORT
         return self.data['TCLCount']
 
     @property
     def load_level(self):
         key = 'LoadLevel'
         if self.device_type == 'TL':
-            return '없음'
+            return KEY_UNSUPPORT
         value = lookup_enum(key, self.data, self.washer)
         if value is None:
-            return '꺼짐'
+            return KEY_OFF
         elif value == '-':
-            return '꺼짐'
-        elif value == '0':
-            return '없음'
-        elif value == '1':
-            return '소량'
-        elif value == '2':
-            return '적음'
-        elif value == '3':
-            return '보통'
-        elif value == '4':
-            return '많음'
-        return value
+            return KEY_OFF
+        try:
+            value2 = LoadLevel[str(int(value))]
+        except ValueError:
+            value2 = lookup_enum_lang(key, self.data, self.washer)
+        else:
+            value2 = value
+        return value2
