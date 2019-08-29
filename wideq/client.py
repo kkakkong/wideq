@@ -236,7 +236,7 @@ class Client(object):
         """
         url = device.model_info_url
         if url not in self._model_info:
-            self._model_info[url] = device.load_model_info()
+            self._model_info[url] = device.load_model_info
         return ModelInfo(self._model_info[url])
 
     def lang_pack_product(self, device):
@@ -245,7 +245,7 @@ class Client(object):
         """
         url = device.lang_pack_product_url
         if url not in self._lang_pack_product:
-            self._lang_pack_product[url] = device.load_lang_pack_product()
+            self._lang_pack_product[url] = device.load_lang_pack_product
         return LangPackProduct(self._lang_pack_product[url])
 
     def lang_pack_model(self, device):
@@ -254,7 +254,7 @@ class Client(object):
         """
         url = device.lang_pack_model_url
         if url not in self._lang_pack_model:
-            self._lang_pack_model[url] = device.load_lang_pack_model()
+            self._lang_pack_model[url] = device.load_lang_pack_model
         return LangPackModel(self._lang_pack_model[url])
 
 
