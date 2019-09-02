@@ -104,7 +104,7 @@ class WasherStatus(object):
     @property
     def remaining_time(self) -> int:
         """Get the remaining time in minutes."""
-        if self.state == '대기 중':
+        if self.state == '대기 중' or self.state == '세탁 완료' or self.state == '전원 OFF':
             return 0
         return (int(self.data['Remain_Time_H']) * 60 +
                 int(self.data['Remain_Time_M']))
@@ -119,7 +119,7 @@ class WasherStatus(object):
     @property
     def initial_time(self) -> int:
         """Get the initial time in minutes."""
-        if self.state == '대기 중':
+        if self.state == '대기 중' or self.state == '세탁 완료' or self.state == '전원 OFF':
             return 0
         return (
             int(self.data['Initial_Time_H']) * 60 +
@@ -388,6 +388,4 @@ class WasherStatus(object):
             value2 = LoadLevel[str(int(value))]
         except ValueError:
             value2 = lookup_enum_lang(key, self.data, self.washer)
-        else:
-            value2 = value
         return value2

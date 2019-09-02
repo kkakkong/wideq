@@ -88,6 +88,20 @@ class DehumStatus(object):
         self.dehum = dehum
         self.data = data
 
+    @staticmethod
+    def _str_to_num(s):
+        """Convert a string to either an `int` or a `float`.
+        Troublingly, the API likes values like "18", without a trailing
+        ".0", for whole numbers. So we use `int`s for integers and
+        `float`s for non-whole numbers.
+        """
+
+        f = float(s)
+        if f == int(f):
+            return int(f)
+        else:
+            return f
+
     def get_bit(self, key: str, index: int) -> str:
         bit_value = int(self.data[key])
         bit_index = 2 ** index
@@ -141,8 +155,8 @@ class DehumStatus(object):
 
     @property
     def current_humidity(self):
-        return self.data['SensorHumidity']
+        return self._str_to_num(self.data['SensorHumidity'])
 
     @property
     def target_humidity(self):
-        return self.data['HumidityCfg']
+        return self._str_to_num(self.data['HumidityCfg'])

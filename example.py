@@ -14,7 +14,7 @@ def authenticate(gateway):
     session.
     """
 
-    login_url = gateway.oauth_url()
+    login_url = 
     print('Log in here:')
     print(login_url)
     print('Then paste the URL where the browser is redirected:')
