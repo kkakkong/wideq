@@ -35,8 +35,10 @@ Credits
 
 This is by [GuGu927][andy].
 The license is [MIT][].
+
 I also made a [Home Assistant component][hass-smartthinq] which uses wideq.
-For Korean user, visit [HomeAssistant Naver Cafe][cafe]
+
+For Korean user, visit [HomeAssistant Naver Cafe][cafe].
 
 This library originated from [Adrian Sampson][sampson]
 
