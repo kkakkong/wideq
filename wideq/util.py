@@ -5,6 +5,7 @@ T = TypeVar('T', bound=Device)
 _UNKNOWN = 'Unknown'
 KEY_OFF = '꺼짐'
 KEY_ON = '켜짐'
+KEY_NONE = '없음'
 
 def lookup_lang(attr: str, value: str, device: T):
     """Looks up an enum value for the provided attr.
@@ -57,7 +58,9 @@ def lookup_enum(attr: str, data: dict, device: T):
     :param device: A sub-class instance of a Device.
     :returns: The enum value.
     """
-    return str(device.model.enum_name(attr, data[attr]))
+    if attr in data:
+        return str(device.model.enum_name(attr, data[attr]))
+    return ""
 
 def lookup_enum_value(attr: str, data: dict, device: T):
     """Looks up an enum value for the provided attr.
@@ -67,7 +70,9 @@ def lookup_enum_value(attr: str, data: dict, device: T):
     :param device: A sub-class instance of a Device.
     :returns: The enum value.
     """
-    return str(device.model.enum_value(attr, data[attr]))
+    if attr in data:
+        return str(device.model.enum_value(attr, data[attr]))
+    return ""
 
 def lookup_reference_name(attr: str, data: dict, device: T) -> str:
     """Look up a reference value for the provided attribute.
@@ -77,15 +82,17 @@ def lookup_reference_name(attr: str, data: dict, device: T) -> str:
     :param device: A sub-class instance of a Device.
     :returns: The looked up value.
     """
-    value = device.model.reference_name(attr, data[attr])
-    if value is None:
-        return KEY_OFF
-    lang = device.lang_product.enum_name(attr, value)
-    if lang == _UNKNOWN:
-        lang = device.lang_model.enum_name(attr, value)
-    if lang == _UNKNOWN:
-        lang = value
-    return str(lang)
+    if attr in data:
+        value = device.model.reference_name(attr, data[attr])
+        if value is None:
+            return KEY_OFF
+        lang = device.lang_product.enum_name(attr, value)
+        if lang == _UNKNOWN:
+            lang = device.lang_model.enum_name(attr, value)
+        if lang == _UNKNOWN:
+            lang = value
+        return str(lang)
+    return ""
 
 def lookup_reference_title(attr: str, data: dict, device: T) -> str:
     """Look up a reference value for the provided attribute.
@@ -95,19 +102,21 @@ def lookup_reference_title(attr: str, data: dict, device: T) -> str:
     :param device: A sub-class instance of a Device.
     :returns: The looked up value.
     """
-    value = device.model.reference_title(attr, data[attr])
-    if value is None:
-        return KEY_OFF
-    if value == "ERROR_NOERROR_TITLE":
-        return "없음"
-    if value == "No_Error":
-        return "없음"
-    lang = device.lang_product.enum_name(attr, value)
-    if lang == _UNKNOWN:
-        lang = device.lang_model.enum_name(attr, value)
-    if lang == _UNKNOWN:
-        lang = value
-    return str(lang)
+    if attr in data:
+        value = device.model.reference_title(attr, data[attr])
+        if value is None:
+            return KEY_OFF
+        if value == "ERROR_NOERROR_TITLE":
+            return KEY_NONE
+        if value == "No_Error":
+            return KEY_NONE
+        lang = device.lang_product.enum_name(attr, value)
+        if lang == _UNKNOWN:
+            lang = device.lang_model.enum_name(attr, value)
+        if lang == _UNKNOWN:
+            lang = value
+        return str(lang)
+    return ""
 
 def lookup_reference_comment(attr: str, data: dict, device: T) -> str:
     """Look up a reference value for the provided attribute.
@@ -117,12 +126,14 @@ def lookup_reference_comment(attr: str, data: dict, device: T) -> str:
     :param device: A sub-class instance of a Device.
     :returns: The looked up value.
     """
-    value = device.model.reference_comment(attr, data[attr])
-    if value is None:
-        return KEY_OFF
-    lang = device.lang_product.enum_name(attr, value)
-    if lang == _UNKNOWN:
-        lang = device.lang_model.enum_name(attr, value)
-    if lang == _UNKNOWN:
-        lang = value
-    return str(lang)
+    if attr in data:
+        value = device.model.reference_comment(attr, data[attr])
+        if value is None:
+            return KEY_OFF
+        lang = device.lang_product.enum_name(attr, value)
+        if lang == _UNKNOWN:
+            lang = device.lang_model.enum_name(attr, value)
+        if lang == _UNKNOWN:
+            lang = value
+        return str(lang)
+    return ""
