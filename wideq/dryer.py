@@ -6,6 +6,9 @@ from .util import lookup_lang, lookup_enum, lookup_enum_lang, lookup_enum_value,
 KEY_ON = '켜짐'
 KEY_OFF = '꺼짐'
 KEY_UNSUPPORT = '미지원'
+STATE_WASH = '세탁 중'
+STATE_DRY = '건조 중'
+STATE_POWEROFF = '전원 OFF'
 
 class DryerDevice(Device):
     """A higher-level interface for a dryer."""
@@ -67,9 +70,9 @@ class DryerStatus(object):
         value = lookup_enum_lang(key, self.data, self.dryer)
         if value is None:
             return KEY_OFF
-        if value == '세탁 중':
-            return '건조 중'
-        if value == '전원 OFF':
+        if value == STATE_WASH:
+            return STATE_DRY
+        if value == STATE_POWEROFF:
             return KEY_OFF
         return value
 

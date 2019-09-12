@@ -6,9 +6,12 @@ from .util import lookup_lang, lookup_enum, lookup_enum_lang, lookup_enum_value,
 KEY_ON = '켜짐'
 KEY_OFF = '꺼짐'
 KEY_UNSUPPORT = '미지원'
+STATE_WAITING = '대기 중'
+STATE_COMPLETE = '세탁 완료'
+STATE_POWEROFF = '전원 OFF'
 
 RinseCount = {
-    '0':'선택 안 함',
+    '0': '선택 안 함',
     '1': '1회',
     '2': '2회',
     '3': '3회',
@@ -18,7 +21,7 @@ RinseCount = {
 }
 
 LoadLevel = {
-    '0':'선택 안 함',
+    '0': '선택 안 함',
     '1': '소량',
     '2': '적음',
     '3': '보통',
@@ -104,7 +107,7 @@ class WasherStatus(object):
     @property
     def remaining_time(self) -> int:
         """Get the remaining time in minutes."""
-        if self.state == '대기 중' or self.state == '세탁 완료' or self.state == '전원 OFF':
+        if self.state == STATE_WAITING or self.state == STATE_COMPLETE or self.state == STATE_POWEROFF:
             return 0
         return (int(self.data['Remain_Time_H']) * 60 +
                 int(self.data['Remain_Time_M']))
@@ -119,7 +122,7 @@ class WasherStatus(object):
     @property
     def initial_time(self) -> int:
         """Get the initial time in minutes."""
-        if self.state == '대기 중' or self.state == '세탁 완료' or self.state == '전원 OFF':
+        if self.state == STATE_WAITING or self.state == STATE_COMPLETE or self.state == STATE_POWEROFF:
             return 0
         return (
             int(self.data['Initial_Time_H']) * 60 +
