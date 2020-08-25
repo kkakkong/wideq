@@ -2,7 +2,7 @@ import enum
 from typing import Optional
 
 from .client import Device
-from .util import lookup_enum, lookup_reference
+from .util import lookup_lang, lookup_enum, lookup_enum_lang, lookup_reference_name, lookup_reference_title
 
 
 class DishWasherState(enum.Enum):
@@ -87,11 +87,25 @@ class DishWasherStatus(object):
         self.dishwasher = dishwasher
         self.data = data
 
+
+    @property
+    def device_name(self):
+        """Get the type of the dishwasher."""
+        return self.dishwasher.device.name
+
+    @property
+    def device_type(self):
+        """Get the type of the dishwasher."""
+        return self.dishwasher.model.model_type
+		
     @property
     def state(self) -> DishWasherState:
         """Get the state of the dishwasher."""
-        return DishWasherState(
-            lookup_enum('State', self.data, self.dishwasher))
+        key = 'State'
+        value = lookup_enum_lang(key, self.data, self.dishwasher)
+        if value is None:
+            return KEY_OFF
+        return value
 
     @property
     def readable_state(self) -> str:
@@ -143,7 +157,8 @@ class DishWasherStatus(object):
     @property
     def course(self) -> str:
         """Get the current course."""
-        course = lookup_reference('Course', self.data, self.dishwasher)
+        key = 'Course'
+        course = lookup_reference_name(key, self.data, self.dishwasher)
         if course in DISHWASHER_COURSE_MAP:
             return DISHWASHER_COURSE_MAP[course]
         else:
@@ -152,9 +167,12 @@ class DishWasherStatus(object):
     @property
     def smart_course(self) -> str:
         """Get the current smart course."""
-        return lookup_reference('SmartCourse', self.data, self.dishwasher)
+        key = 'SmartCourse'
+        return lookup_reference_name(key, self.data, self.dishwasher)
 
     @property
     def error(self) -> str:
         """Get the current error."""
-        return lookup_reference('Error', self.data, self.dishwasher)
+        key = 'Error'
+        return lookup_reference_title(key, self.data, self.dishwasher)
+
